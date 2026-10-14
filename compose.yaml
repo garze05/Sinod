@@ -1,0 +1,28 @@
+# Local PostgreSQL
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: sinod
+      POSTGRES_USER: sinod
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # PostgreSQL 18 saves its data in /var/lib/postgresql/18/docker.
+      - postgres_data:/var/lib/postgresql
+    secrets:
+      - postgres_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres_data:
+
+secrets:
+  postgres_password:
+    file: ./.secrets/postgres_password

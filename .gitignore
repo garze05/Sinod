@@ -6,7 +6,8 @@
 ._*
 
 # Custom folder icons
-Icon
+Icon
+
 
 # Volume root files
 .DocumentRevisions-V100
@@ -118,3 +119,12 @@ artifacts/
 
 # Publish output
 publish/
+
+# Local credentials
+.secrets/
+.env
+.env.*
+!.env.example
+
+# misc (temporal)
+docs/
