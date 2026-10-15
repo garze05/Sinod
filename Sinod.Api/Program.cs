@@ -13,7 +13,7 @@ var connectionString = builder.Configuration.GetConnectionString("Sinod");
 if (string.IsNullOrWhiteSpace(connectionString))
 {
     throw new InvalidOperationException(
-        "Configura ConnectionStrings:Sinod. Para desarrollo local, ejecuta bash scripts/setup-local.sh desde la raíz del repositorio.");
+        "Configure ConnectionStrings.Sinod. For local development, run bash scripts/setup-local.sh from root.");
 }
 
 // Add PostgreSQL Database context

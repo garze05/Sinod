@@ -128,3 +128,6 @@ publish/
 
 # misc (temporal)
 docs/
+
+# Jetbrains Rider Files
+.idea
