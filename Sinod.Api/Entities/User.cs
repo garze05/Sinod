@@ -8,6 +8,7 @@ public class User
     
     [Required]
     [EmailAddress(ErrorMessage = "Please provide a valid email address")]
+    [StringLength(50, ErrorMessage = "Email must be 30 characters max")]
     public string Email { get; set; } = string.Empty;
     
     [Required]

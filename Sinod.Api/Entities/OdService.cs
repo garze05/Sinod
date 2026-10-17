@@ -13,6 +13,15 @@ public enum ServiceType
     Other
 }
 
+public enum ProfileType
+{
+    StandardCharacter,
+    RentedCharacter,
+    SpecialCharacter,
+    SmallInflatable,
+    BigInflatable,
+}
+
 public class OdService
 {
     public int Id { get; set; }
@@ -27,10 +36,24 @@ public class OdService
     public ServiceType ServiceType { get; set; }
     
     public int PricingProfileId { get; set; }
-    
     public OdServicePricingProfile PricingProfile { get; set; }
     
     // If and only if this specific service needs a specific price
     [Precision(12, 2)]
     public decimal? BasePrice { get; set; }
+}
+
+public class OdServicePricingProfile
+{
+    public int Id { get; set; }
+    
+    public ProfileType ProfileType { get; set; }
+    
+    [Precision(12, 2)]
+    public decimal BasePrice { get; set; }
+    
+    // Need to define if this is required
+    // public int MinimumDurationMinutes { get; set; }
+    
+    public int BaseDurationMinutes { get; set; }
 }
