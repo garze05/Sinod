@@ -31,9 +31,10 @@ public class Opportunity
     #region Business specific
     
     public CommercialStatus Status { get; set; } = CommercialStatus.Discovery;
-    public DateTime EventDate { get; set; }
+    public DateTime? EventDate { get; set; }
     public EventLocation? Location { get; set; }
-    public ICollection<OdService> Services { get; set; }
+    public ICollection<OdService> Services { get; set; } = new List<OdService>();
+    public string? ClosureReason { get; set; }
     
     #endregion
     

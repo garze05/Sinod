@@ -126,8 +126,7 @@ publish/
 .env.*
 !.env.example
 
-# misc (temporal)
-docs/
+# Project documentation is versioned.
 
 # Jetbrains Rider Files
 .idea

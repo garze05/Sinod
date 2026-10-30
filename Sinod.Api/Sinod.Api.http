@@ -1,6 +1,219 @@
-@Sinod.Api_HostAddress = http://localhost:5172
+# Ejecutar en orden con el cliente HTTP de Rider.
+# Los handlers guardan los IDs devueltos; cada ejecución crea sus propios registros.
+@host = http://localhost:5172
 
-GET {{Sinod.Api_HostAddress}}/api/Health
-Accept: application/json
+### Salud
+GET {{host}}/api/health
 
-###
+### Perfil de precios
+POST {{host}}/api/pricing-profiles
+Content-Type: application/json
+
+{
+  "profileType": "StandardCharacter",
+  "basePrice": 10000,
+  "baseDurationMinutes": 60
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("profileId", response.body.id);
+%}
+
+### Servicio
+POST {{host}}/api/services
+Content-Type: application/json
+
+{
+  "name": "Personaje de demostración",
+  "serviceType": "Character",
+  "pricingProfileId": {{profileId}}
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("serviceId", response.body.id);
+%}
+
+### Cliente particular
+POST {{host}}/api/clients
+Content-Type: application/json
+
+{
+  "firstName": "Ana demo",
+  "lastName": "Prueba",
+  "phone": "+506 8888-1234"
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("clientId", response.body.id);
+%}
+
+### Oportunidad particular
+POST {{host}}/api/opportunities
+Content-Type: application/json
+
+{
+  "clientId": {{clientId}},
+  "eventDate": "2026-12-12T20:00:00Z",
+  "location": {
+    "address": "Salón de eventos en Heredia",
+    "province": "Heredia"
+  },
+  "serviceIds": [
+    {{serviceId}}
+  ]
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("opportunityId", response.body.id);
+%}
+
+### Cotización particular
+POST {{host}}/api/opportunities/{{opportunityId}}/quotations
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "serviceId": {{serviceId}},
+      "quantity": 1,
+      "durationMinutes": 60,
+      "discountPercent": 0
+    }
+  ],
+  "transport": 0
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("quotationId", response.body.id);
+%}
+
+### Registrar envío por WhatsApp
+POST {{host}}/api/opportunities/{{opportunityId}}/quotations/{{quotationId}}/send
+
+### Registrar aceptación
+POST {{host}}/api/opportunities/{{opportunityId}}/quotations/{{quotationId}}/accept
+
+### Registrar anticipo del 50%
+POST {{host}}/api/opportunities/{{opportunityId}}/deposits
+Content-Type: application/json
+
+{
+  "amount": 5000,
+  "receivedAt": "2026-10-27T18:00:00Z",
+  "reference": "Comprobante demo particular"
+}
+
+### Confirmar disponibilidad y ganar
+POST {{host}}/api/opportunities/{{opportunityId}}/win
+Content-Type: application/json
+
+{
+  "availabilityConfirmed": true,
+  "reason": "Aceptación y anticipo del 50% registrados"
+}
+
+### Consultar todo el historial
+GET {{host}}/api/opportunities/{{opportunityId}}
+
+### Buscar por teléfono sin separadores
+GET {{host}}/api/opportunities?search=88881234
+
+### Eventos por cliente
+GET {{host}}/api/events?clientId={{clientId}}
+
+### Municipalidad
+POST {{host}}/api/companies
+Content-Type: application/json
+
+{
+  "name": "Municipalidad de demostración",
+  "type": "Municipality",
+  "baseRate": 0
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("municipalityId", response.body.id);
+%}
+
+### Cliente municipal
+POST {{host}}/api/clients
+Content-Type: application/json
+
+{
+  "firstName": "Contacto municipal demo",
+  "phone": "+506 2222-3344",
+  "companyId": {{municipalityId}}
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("municipalClientId", response.body.id);
+%}
+
+### Oportunidad municipal
+POST {{host}}/api/opportunities
+Content-Type: application/json
+
+{
+  "clientId": {{municipalClientId}},
+  "eventDate": "2026-12-15T20:00:00Z",
+  "location": {
+    "address": "Parque municipal",
+    "province": "Heredia"
+  },
+  "serviceIds": [
+    {{serviceId}}
+  ]
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("municipalOpportunityId", response.body.id);
+%}
+
+### Cotización municipal
+POST {{host}}/api/opportunities/{{municipalOpportunityId}}/quotations
+Content-Type: application/json
+
+{
+  "items": [
+    {
+      "serviceId": {{serviceId}},
+      "quantity": 1,
+      "durationMinutes": 60
+    }
+  ],
+  "transport": 0
+}
+
+> {%
+  client.test("Creación correcta", function () { client.assert(response.status === 201); });
+  client.global.set("municipalQuotationId", response.body.id);
+%}
+
+### Registrar envío municipal
+POST {{host}}/api/opportunities/{{municipalOpportunityId}}/quotations/{{municipalQuotationId}}/send
+
+### Registrar aceptación municipal
+POST {{host}}/api/opportunities/{{municipalOpportunityId}}/quotations/{{municipalQuotationId}}/accept
+
+### Confirmar contratación municipal sin anticipo
+POST {{host}}/api/opportunities/{{municipalOpportunityId}}/win
+Content-Type: application/json
+
+{
+  "availabilityConfirmed": true,
+  "reason": "Contratación municipal aceptada; no requiere anticipo"
+}
+
+### Consultar historial municipal
+GET {{host}}/api/opportunities/{{municipalOpportunityId}}
+
+### Buscar evento municipal
+GET {{host}}/api/events?clientId={{municipalClientId}}

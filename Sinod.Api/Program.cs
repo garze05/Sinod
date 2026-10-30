@@ -1,39 +1,39 @@
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Sinod.Api.Data;
+using Sinod.Api.Endpoints;
+using Sinod.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddValidation();
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.SerializerOptions.UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow;
+});
 
 var connectionString = builder.Configuration.GetConnectionString("Sinod");
 if (string.IsNullOrWhiteSpace(connectionString))
-{
     throw new InvalidOperationException(
         "Configure ConnectionStrings.Sinod. For local development, run bash scripts/setup-local.sh from root.");
-}
 
-// Add PostgreSQL Database context
 builder.Services.AddDbContext<SinodDbContext>(options => options.UseNpgsql(connectionString));
-
-// Add Native ASP.NET Health Service
+builder.Services.AddScoped<ClientService>();
+builder.Services.AddScoped<CatalogService>();
+builder.Services.AddScoped<CommercialService>();
 builder.Services.AddHealthChecks().AddDbContextCheck<SinodDbContext>("postgresql");
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
+app.UseExceptionHandler();
+if (app.Environment.IsDevelopment()) app.MapOpenApi();
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
+app.MapHealthEndpoints();
+app.MapClientEndpoints();
+app.MapCatalogEndpoints();
+app.MapCommercialEndpoints();
 app.Run();
+
+public partial class Program;

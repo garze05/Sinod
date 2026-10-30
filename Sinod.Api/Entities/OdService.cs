@@ -36,7 +36,7 @@ public class OdService
     public ServiceType ServiceType { get; set; }
     
     public int PricingProfileId { get; set; }
-    public OdServicePricingProfile PricingProfile { get; set; }
+    public OdServicePricingProfile PricingProfile { get; set; } = null!;
     
     // If and only if this specific service needs a specific price
     [Precision(12, 2)]

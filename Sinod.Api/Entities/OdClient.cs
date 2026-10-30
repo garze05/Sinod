@@ -22,7 +22,7 @@ public class OdClient
     [StringLength(30, ErrorMessage = "Phone number cannot be longer than 30 characters")]
     public string Phone { get; set; } = string.Empty;
     
-    [Range(1, int.MaxValue, ErrorMessage = "Company is not valid")]
+    [Range(1, int.MaxValue, ErrorMessage = "Company Id is not valid")]
     public int? CompanyId { get; set; }
     
     public Company? Company { get; set; }
