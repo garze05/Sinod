@@ -1,6 +1,6 @@
 # V1 0.1: recorrido comercial
 
-Implementa el alcance de la nota «V1 - 0.1: recorrido comercial completo» (4 oct–1 nov) del vault de SINOD, y sus definiciones de Cliente, Oportunidad, Cotización y Evento. El criterio técnico se demuestra con un caso particular y uno municipal en `Sinod.Tests/CommercialFlowTests.cs`. La validación del equipo con casos reales sigue siendo el criterio de aceptación del producto.
+Implementa el núcleo de [V1 0.1: recorrido comercial completo](negocio/alcance-y-pendientes.md#v1-01-recorrido-comercial-completo) y sus definiciones de [Cliente, Oportunidad, Cotización y Evento](negocio/dominio-y-flujo-comercial.md). El [contexto de negocio](negocio/README.md) y las [políticas de precios y pagos](negocio/precios-y-politicas.md) están versionados en el repositorio. El criterio técnico se demuestra con un caso particular y uno municipal en `Sinod.Tests/CommercialFlowTests.cs`. La validación del equipo con casos reales sigue siendo el criterio de aceptación del producto.
 
 ## Recursos y operaciones
 

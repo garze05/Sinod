@@ -22,6 +22,7 @@ El script conserva la contraseña local y configura `ConnectionStrings:Sinod` en
 - `Sinod.Api/Entities`: entidades persistidas y valores del dominio.
 - `Sinod.Api/Data`: DbContext y migraciones EF Core.
 - `Sinod.Tests`: pruebas HTTP de salud y del recorrido comercial sobre PostgreSQL real.
+- `docs/negocio`: contexto empresarial, dominio, políticas y alcance pendientes, versionados con el código.
 
 La [decisión de Minimal APIs](decisiones/0001-minimal-apis.md) explica la organización. El [recorrido de V1 0.1](flujo-comercial-v1.md) describe rutas, reglas, migraciones, pruebas y supuestos de precios. OpenAPI está en `/openapi/v1.json` en Development y los ejemplos ejecutables en `Sinod.Api/Sinod.Api.http`.
 
@@ -37,3 +38,13 @@ dotnet ef database update --project Sinod.Api -- --environment Development
 ## Pruebas
 
 Con Docker iniciado, ejecutar los tests desde Rider o con `dotnet test Sinod.Tests/Sinod.Tests.csproj`. Testcontainers levanta un PostgreSQL 18 con puerto dinámico y lo elimina al terminar; no hace falta ejecutar Compose ni levantar `sinod-tests` para las pruebas. Si `SINOD_TEST_POSTGRES` está definida, se usa ese servidor en su lugar, como ocurre en CI. Ver los detalles en la [guía del flujo](flujo-comercial-v1.md#migración-y-verificación).
+
+## Criterio de finalización para agentes de IA
+
+Las instrucciones obligatorias para todo el repositorio están en [AGENTS.md](../AGENTS.md). Cada cambio realizado por un agente debe incluir una actualización útil del README y de los documentos afectados por el comportamiento final. Si cambia una ruta, regla, validación, configuración o migración, actualizar también sus ejemplos e instrucciones.
+
+Crear o ajustar tests en `Sinod.Tests` para las funcionalidades críticas y las reglas de negocio afectadas. Una corrección de bug debe tener una prueba de regresión que represente el caso real. Validar resultados observables, casos límite y rechazos relevantes, usando PostgreSQL real cuando la persistencia sea parte del comportamiento. No deshabilitar tests ni debilitar aserciones para ocultar un problema.
+
+Antes de declarar terminado un cambio, ejecutar `dotnet test Sinod.Tests/Sinod.Tests.csproj` sin filtros y comprobar que la suite completa pasa sin omisiones. Si no se puede ejecutar o falla, la validación queda pendiente y debe indicarse en la entrega. Los cambios exclusivamente documentales no necesitan tests artificiales, pero sí revisar coherencia, enlaces y ejecutar la suite existente.
+
+Ante dudas de negocio, consultar [docs/negocio](negocio/README.md) y las fuentes indicadas en `AGENTS.md` antes de inventar requisitos. El contexto está dentro del repositorio y no requiere carpetas personales ni servicios de sincronización. Distinguir las políticas confirmadas y las propuestas pendientes del comportamiento implementado; documentar las decisiones de negocio relevantes y representarlas en los tests.

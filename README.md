@@ -38,6 +38,7 @@ Recorrido implementado: cliente → oportunidad → cotización versionada → e
 - [Decisión de arquitectura: Minimal APIs](docs/decisiones/0001-minimal-apis.md)
 - [Rutas, reglas y ejemplos de V1 0.1](docs/flujo-comercial-v1.md)
 - [Desarrollo local](docs/desarrollo-local.md)
+- [Contexto de negocio de OkiDoki](docs/negocio/README.md): dominio, políticas de pago y precios, alcance y decisiones pendientes, disponibles dentro del repositorio.
 - Ejemplos HTTP: `Sinod.Api/Sinod.Api.http`
 - OpenAPI en Development: `/openapi/v1.json`
 
@@ -46,3 +47,9 @@ dotnet test Sinod.Tests/Sinod.Tests.csproj
 ```
 
 Con Docker iniciado, Rider y `dotnet test` levantan automáticamente un PostgreSQL 18 mediante Testcontainers y eliminan el contenedor al terminar. No hace falta configurar variables ni levantar `sinod-tests` manualmente. Si `SINOD_TEST_POSTGRES` está definida, se usa ese servidor y solo se crea y elimina una base temporal; CI ya configura esa variable. Ver la [guía del flujo](docs/flujo-comercial-v1.md#migración-y-verificación).
+
+## Cambios realizados por agentes de IA
+
+Todo agente debe seguir [AGENTS.md](AGENTS.md). Cada cambio debe actualizar este README y la documentación afectada, además de crear o ajustar tests de funcionalidad crítica en `Sinod.Tests` cuando corresponda. Una funcionalidad o corrección solo se considera completa cuando la documentación está sincronizada y la suite completa pasa, sin omisiones ni atajos que oculten fallos. Los tests deben representar reglas y resultados reales del negocio. La [guía de desarrollo](docs/desarrollo-local.md#criterio-de-finalización-para-agentes-de-ia) detalla el proceso de validación.
+
+El contexto de negocio adicional se mantiene en [docs/negocio](docs/negocio/README.md), con referencias relativas y sin depender de carpetas personales o servicios de sincronización. Allí se distinguen las políticas del negocio, las propuestas pendientes y lo que ya implementa la API.
